@@ -13,7 +13,7 @@ class Yandex_Money
     const MODE_MONEY = 2;
     const MODE_BILLING = 3;
 
-    const MODULE_VERSION = '1.0.2';
+    const MODULE_VERSION = '1.0.3';
 
     public $code;
     public $title;
