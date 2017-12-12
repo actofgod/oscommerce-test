@@ -52,6 +52,7 @@ class Updater
         $fileName = $this->downloadLastVersion($versionInfo['tag']);
         if (!empty($fileName)) {
             if ($this->createBackup(\Yandex_Money::MODULE_VERSION)) {
+                $this->module->log('info', 'Unpack file ' . $fileName);
                 if ($this->unpackLastVersion($fileName)) {
                     $result = array(
                         'message' => 'Версия модуля ' . $versionInfo['version'] . ' (' . $fileName . ') была успешно загружена и установлена',
@@ -180,7 +181,7 @@ class Updater
         $file = DIR_DOWNLOAD . '/' . $this->downloadDirectory . '/version_log.txt';
 
         if ($useCache) {
-            if (file_exists($file)) {
+            if (file_exists($file) && is_readable($file)) {
                 $content = preg_replace('/\s+/', '', file_get_contents($file));
                 if (!empty($content)) {
                     $parts = explode(':', $content);
@@ -205,7 +206,9 @@ class Updater
         }
 
         $cache = $version . ':' . time();
-        file_put_contents($file, $cache);
+        if (is_writable($file)) {
+            file_put_contents($file, $cache);
+        }
 
         return array(
             'tag'     => $version,
@@ -296,7 +299,7 @@ class Updater
 
         try {
             $sourceDirectory = ROOT_DIRECTORY;
-            $archive = new RestoreZip($fileName, $this);
+            $archive = new RestoreZip($fileName, $this->module);
             $archive->restore('oscommerce.map', $sourceDirectory);
         } catch (\Exception $e) {
             $this->module->log('error', $e->getMessage());

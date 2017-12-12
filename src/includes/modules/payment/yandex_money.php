@@ -73,15 +73,15 @@ class Yandex_Money
             . '<li>Последняя проверка наличия новых версий — ' . $version['newVersionInfo']['date'] . '</li></ul>';
         if ($version['new_version_available']) {
             $versionText .= '<h4>История изменений:</h4><p>' . $version['changelog'] . '</p>'
-                . '<button type="button" id="update-module" class="btn btn-primary">Обновить</button>';
+                . '<a href="javascript://" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary ui-priority-primary" id="update-module"><span class="ui-button-icon-primary ui-icon ui-icon-document"></span><span class="ui-button-text">Обновить</span></a>';
         } else {
             $versionText .= '<p>Установлена последняя версия модуля.</p>';
         }
 
         $backups = $this->getUpdater()->getBackupList();
         if (!empty($backups)) {
-            $versionText .= '<p><a id="backup-list" href="javascript://">Просмотр списока резервных копий ('
-                . count($backups) . ')</a></p><div id="backup-list-window" style="display:none;"><table><thead><tr>'
+            $versionText .= '<p><a id="backup-list" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary ui-priority-secondary" href="javascript://"><span class="ui-button-icon-primary ui-icon ui-icon-document"></span><span class="ui-button-text">Резервные копии ('
+                . count($backups) . ')</span></a></p><div id="backup-list-window" style="display:none;"><table><thead><tr>'
                 . '<th>Версия</th><th>Имя файла</th><th>Дата создания</th><th></th><th></th></tr></thead><tbody><tr>'
                 . '<td></td><td></td><td></td><td></td><td></td></tr></tbody></table></div>';
         }
@@ -101,6 +101,8 @@ jQuery(document).ready(function () {
     jQuery('#backup-list-window').delegate('a.restore-backup', 'click', restoreBackupHandler);
     jQuery('#backup-list-window').delegate('a.remove-backup', 'click', removeBackupHandler);
     
+    jQuery('#update-module').click(updateModuleHandler);
+    
     jQuery('#backup-list').click(function () {
         jQuery.ajax({
             url: 'ext/modules/payment/yandex_money/ajax.php',
@@ -117,8 +119,8 @@ jQuery(document).ready(function () {
                             + '<td>' + result.list[i].version + '</td>'
                             + '<td>' + result.list[i].name + '</td>'
                             + '<td>' + result.list[i].date + '</td>'
-                            + '<td><a href="javascript://" class="restore-backup">Восстановить</a></td>'
-                            + '<td><a href="javascript://" class="remove-backup">Удалить</a></td></tr>';
+                            + '<td><a href="javascript://" class="restore-backup ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary ui-priority-secondary"><span class="ui-button-icon-primary ui-icon ui-icon-document"></span><span class="ui-button-text">Восстановить</span></a></td>'
+                            + '<td><a href="javascript://" class="remove-backup ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary ui-priority-secondary"><span class="ui-button-icon-primary ui-icon ui-icon-document"></span><span class="ui-button-text">Удалить</span></a></td></tr>';
                     }
                     jQuery('#backup-list-window table tbody').html(tpl);
                     jQuery('#backup-list-window').dialog({
@@ -163,6 +165,25 @@ jQuery(document).ready(function () {
                     alert(res.message);
                     if (res.success) {
                         row.remove();
+                    }
+                }
+            });
+        }
+    }
+    
+    function updateModuleHandler() {
+        if (window.confirm('Вы действительно хотите обновить модуль до последней версии?')) {
+            jQuery.ajax({
+                method: 'GET',
+                url: 'ext/modules/payment/yandex_money/ajax.php?action=update',
+                data: {
+                    action: 'update'
+                },
+                dataType: 'json',
+                success: function (res) {
+                    alert(res.message);
+                    if (res.success) {
+                        document.location = document.location;
                     }
                 }
             });
