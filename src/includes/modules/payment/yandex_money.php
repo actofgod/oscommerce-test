@@ -13,7 +13,7 @@ class Yandex_Money
     const MODE_MONEY = 2;
     const MODE_BILLING = 3;
 
-    const MODULE_VERSION = '1.0.5';
+    const MODULE_VERSION = '1.0.6';
 
     public $code;
     public $title;
@@ -501,7 +501,7 @@ jQuery(document).ready(function () {
         $order_id = (int)$insert_id;
         if ($this->mode == self::MODE_KASSA) {
             $redirectUrl = str_replace(
-                '&apm;',
+                '&amp;',
                 '&',
                 tep_href_link(
                     FILENAME_CHECKOUT_CONFIRMATION,
