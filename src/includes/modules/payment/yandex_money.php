@@ -13,7 +13,7 @@ class Yandex_Money
     const MODE_MONEY = 2;
     const MODE_BILLING = 3;
 
-    const MODULE_VERSION = '1.0.3';
+    const MODULE_VERSION = '1.0.5';
 
     public $code;
     public $title;
@@ -198,6 +198,7 @@ JS;
 
     public function javascript_validation()
     {
+
         return false;
     }
 
@@ -499,7 +500,17 @@ jQuery(document).ready(function () {
         $ym_payment_type = $_SESSION['ym_payment_type'];
         $order_id = (int)$insert_id;
         if ($this->mode == self::MODE_KASSA) {
-            $redirectUrl = tep_href_link(FILENAME_CHECKOUT_CONFIRMATION, 'payment_confirmation=1&order_id='.$order_id);
+            $redirectUrl = str_replace(
+                '&apm;',
+                '&',
+                tep_href_link(
+                    FILENAME_CHECKOUT_CONFIRMATION,
+                    'payment_confirmation=1&order_id=' . $order_id,
+                    'SSL',
+                    false,
+                    false
+                )
+            );
             $order->info['order_id'] = $order_id;
             $payment = $this->getKassa()->createPayment($order, $ym_payment_type, $redirectUrl);
 

@@ -100,6 +100,7 @@ class RestoreZip
         }
 
         foreach ($root->getFileEntries() as $entry) {
+            $this->log('Restore file ' . $entry->getRelativePath());
             $this->restoreFile($directoryName, $entry);
         }
     }
